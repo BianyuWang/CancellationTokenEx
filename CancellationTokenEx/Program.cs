@@ -19,36 +19,45 @@ namespace CancellationTokenEx
 
             // way 1, 
 
-            await Download1Async(url, 100, cts.Token);
+            //await Download1Async(url, 100, cts.Token);
 
-            //way 2
-            try
-            {
-                await Download2Async(url, 100, cts.Token);
-                //await DownloadAsync(url, 100);
+            ////way 2
+            //try
+            //{
+            //    await Download2Async(url, 100, cts.Token);
+            //    //await DownloadAsync(url, 100);
+            //}
+            //catch (Exception e)
+            //{
+            //    if (cts.IsCancellationRequested)
+            //    { Console.WriteLine("request is cancelled"); }
+
+            //}
+
+            ////way 3 pass cancellationToken to GetAsync
+
+            //try
+            //{
+            //    await Download3Async(url, 100, cts.Token);
+            //    //await DownloadAsync(url, 100);
+            //}
+            //catch (Exception e)
+            //{
+            //    if (cts.IsCancellationRequested)
+            //    { Console.WriteLine("request is cancelled"); }
+
+            //}
+
+            //way 4 manually stop progran
+
+            CancellationTokenSource cts4 = new CancellationTokenSource();
+            CancellationToken cToken = cts4.Token;
+            Download3Async(url, 200, cToken);
+            while (Console.ReadLine() != "q")
+            { //if user not enter 'q' to quite program, do something
             }
-            catch (Exception e)
-            {
-                if (cts.IsCancellationRequested)
-                { Console.WriteLine("request is cancelled"); }
-
-            }
-
-            //way 3 pass cancellationToken to GetAsync
-
-            try
-            {
-                await Download3Async(url, 100, cts.Token);
-                //await DownloadAsync(url, 100);
-            }
-            catch (Exception e)
-            {
-                if (cts.IsCancellationRequested)
-                { Console.WriteLine("request is cancelled"); }
-
-            }
-          
-
+            cts4.Cancel();
+            Console.ReadLine();
         }
         static async Task Download1Async(string URL, int repeat, CancellationToken cancellationToken=default)
         {
