@@ -14,10 +14,19 @@ namespace CancellationTokenEx
             CancellationTokenSource cts = new CancellationTokenSource();
             //canel request after 5 seconds
             cts.CancelAfter(5000); // pass milliseconds
-            
+
             // download google 100 times, and cancel download after 5 seconds, if download is not finished.
-            await DownloadAsync(url, 100, cts.Token);
-            //await DownloadAsync(url, 100);
+            try
+            {
+                await DownloadAsync(url, 100, cts.Token);
+                //await DownloadAsync(url, 100);
+            }
+            catch (Exception e)
+            {
+                if (cts.IsCancellationRequested)
+                { Console.WriteLine("request is cancelled"); }
+              
+            }
 
 
         }
@@ -30,12 +39,20 @@ namespace CancellationTokenEx
                 {
                     string htmlText = await client.GetStringAsync(URL);
                     Console.WriteLine($"{DateTime.Now}:{htmlText}");
-                    if (cancellationToken.IsCancellationRequested)
-                    {
-                        Console.WriteLine("Resquest is cancelled");
-                        break;
-                    }
-                
+
+                    #region Using cancellationToken way one
+                    // #way 1: check cancellationToken manually 
+
+                    //if (cancellationToken.IsCancellationRequested)
+                    //{
+                    //    // if cancelled, do something
+                    //    Console.WriteLine("Resquest is cancelled");
+                    //    break;
+                    //}
+                    #endregion
+
+                    //#way 2: throw an exception, and manage exception outside of function.
+                    cancellationToken.ThrowIfCancellationRequested();
                 }
             
             
